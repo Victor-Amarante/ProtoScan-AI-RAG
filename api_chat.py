@@ -46,12 +46,11 @@ def process_documents():
     chat_chain = ConversationalRetrievalChain.from_llm(llm=chat, memory=memory, retriever=retriever, return_source_documents=True, verbose=True)
 
 @app.post("/upload")
-async def upload_pdf(files: List[UploadFile] = File(...), background_tasks: BackgroundTasks = None):
+async def upload_pdf(file: UploadFile = File(...), background_tasks: BackgroundTasks = None):
     """Recebe PDFs e inicia o processamento"""
-    for file in files:
-        file_path = FILES_DIR / f"{uuid.uuid4()}_{file.filename}"
-        with open(file_path, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
+    file_path = FILES_DIR / f"{uuid.uuid4()}_{file.filename}"
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
     background_tasks.add_task(process_documents)
     return {"message": "Arquivos enviados e processamento iniciado."}
 
