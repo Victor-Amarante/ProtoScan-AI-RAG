@@ -1,0 +1,1 @@
+export { ResponseAi } from './responseAi';
